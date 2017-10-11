@@ -1,0 +1,289 @@
+<style>
+	.c_condition{
+		height: 40px;
+	}
+</style>
+<div class="editingarea">
+  <div class="c_flex">
+    <span class="c_flexible"></span>
+  </div>
+  <div class="c_editview">
+    <div class="c_condition search">
+      <span>
+	      <select>
+	        <option value="stem">题干</option>
+	      </select>
+	    </span>
+      <span class="pl5 " ><input type="text"></span>
+      <span class="pl15 pr15 btn_gray ">查找</span>
+      <span class="icon_lead-in"><em class="icon_r">批量导入题目</em></span>
+      <span class="icon_add"><em class="icon_r">单个添加题目</em></span>
+    </div>
+    
+		
+
+
+
+    <div class="divtable">
+    	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablea">
+        <tbody>
+        	<tr>
+	          <td align="center">类型</td>
+	          <td align="left">
+		          <div class="chose chose1">
+			          <a href="#" class="active3" id="[1,2,3]">全部</a>
+		          </div>
+	          </td>
+        	</tr>
+        	<tr>
+	          <td align="center">难度</td>
+	          <td align="left">
+		          <div class="chose chose2">
+			          <a href="#" class="active3" id="[1,2,3]">全部</a>
+		          </div>
+	          </td>
+        	</tr>
+        	<tr>
+	          <td align="center">方向</td>
+	          <td align="left">
+		          <div class="chose chose3">
+			          <a href="#" class="active3" id="[1,2,3,4,5,6]">全部</a>
+		          </div>
+	          </td>
+        	</tr>
+        	<tr>
+	          <td align="center">知识点</td>
+	          <td align="left">
+		          <div class="chose chose4">
+			          <a href="#" class="active3" id="[1,2,3,4,5,6,7,8]">全部</a>
+		          </div>
+	          </td>
+        	</tr>
+        </tbody>
+			</table>
+    </div>
+    <div class="Catalog">
+      <div class="Catalog_right">
+        <div class="Catalogtitle">总计
+	        <em>0</em>道题&nbsp;&nbsp;提示：单击题面可显示答案和解析&nbsp;&nbsp;
+	        <input type="checkbox" />
+	        <b>显示答案和解析</b>&nbsp;&nbsp;
+	        <a href="#" class="Thispage">本页全部试题加入试卷</a>
+		        <div>
+			        <i>1</i>
+			        <a href="#" class="pageone">前</a>
+			        <a href="#" class="pagetwo">后</a>
+		        </div>
+        </div>
+      </div>
+    	<div class="clear"></div>
+  	</div>
+	</div>
+</div>
+<script>
+	$(function(){
+		function handler(data){
+			$('.Catalog_rightnei').remove();
+			//
+			var subjectNum = 0;
+			data.forEach(function(item){
+				subjectNum++;
+				var newDiv = $('<div class="Catalog_rightnei">'
+        	+'<div class="Catalogtitwo">题号：'+ item.id +'&nbsp;&nbsp;题型：还是得&nbsp;&nbsp;难度：订餐&nbsp;&nbsp;上传人：女性司机&nbsp;&nbsp;来源：才能使得&nbsp;&nbsp;上传时间:'+item.uploadTime.slice(0,10)+'&nbsp;&nbsp'+item.uploadTime.slice(11,19)+'&nbsp;&nbsp;组卷次数：'
+          	+'<em>0</em>'
+          +'</div>'
+          +'<div class="Catalogcontent">'
+          	+'<div class="Catalogcontentup" id='+item.id+'>'
+          		+'<div>'+item.stem+'</div>'
+          		+'<div class="answer" id='+item.id+'>'
+          			+'<div id='+item.id+' ></div>'
+          		+'</div>'
+          	+'</div>'
+          	+'<div class="Catalogcontentdown" id='+item.id+'>'
+	        		+'<a href="javascript:void(0);" class="pass" id='+item.id+'>审核通过</a>'
+	        		+'<a href="javascript:void(0);" class="notpass" id='+item.id+'>审核不通过</a>'
+	        		+'<a href="javascript:void(0);" class="deleteSub" id='+item.id +'>删除题目</a>'
+          	+'</div>'
+          +'</div>'
+        +'</div>');
+				$('.Catalog_right').append(newDiv);
+			});	
+			return subjectNum;
+		};
+		$('.search span:eq(2)').tri
+		//题干关键字查找
+		$('.search span:eq(2)').on('click',function(){
+			// var subjectNum;
+			var stem = $('.search span:eq(1) input').val();
+			$.getJSON('exam/manager/findSubjectByStem',{stem: stem},handler);
+		});
+		//所有类型
+		$.getJSON('exam/manager/getAllSubjectType',function(data){
+			//类型菜单点击事件
+			$('.chose1').on('click','a',function(){
+				$('.chose1 a').each(function(index,item){
+					$(this).removeClass();
+				});
+				$(this).addClass('active3');
+
+				var id = [];
+				$('td a[class="active3"]').each(function(index,item){
+					id.push(item.id);
+				});
+
+				$.getJSON('exam/manager/getDepartmentSubject',{
+					id: id 
+				},handler);
+
+			});
+			data.forEach(function(item,index){
+				var newA = $('<a href="#" id="['+item.id+']">'+item.realName+'</a>');
+				$('.chose1').append(newA);
+			});
+		});
+		$.getJSON('exam/manager/getAllSubjectLevel',function(data){
+			//难度菜单点击事件
+			$('.chose2').on('click','a',function(){
+				$('.chose2 a').each(function(index,item){
+					$(this).removeClass();
+				});
+				$(this).addClass('active3');
+				
+				var id = [];
+				$('td a[class="active3"]').each(function(index,item){
+					id.push(item.id);
+				});
+
+				$.getJSON('exam/manager/getDepartmentSubject',{
+					id: id 
+				},handler);
+			});
+
+			data.forEach(function(item,index){
+				var newA = $('<a href="#" id="['+item.id+']">'+item.realName+'</a>');
+				$('.chose2').append(newA);
+			});
+		});
+		$.getJSON('exam/manager/getAllDepartmentes',function(data){
+			//方向菜单点击事件
+			$('.chose3').on('click','a',function(){
+				$('.chose3 a').each(function(index,item){
+					$(this).removeClass();
+				});
+				$(this).addClass('active3');
+				
+				var id = [];
+				$('td a[class="active3"]').each(function(index,item){
+					id.push(item.id);
+				});
+
+				$.getJSON('exam/manager/getDepartmentSubject',{
+					id: id 
+				},handler);
+			});
+
+			data.forEach(function(item,index){
+				var newA = $('<a href="#" id="['+item.id+']">'+item.name+'</a>');
+				$('.chose3').append(newA);
+			});
+		});
+		$.getJSON('exam/manager/getAllTopics',function(data){
+			//知识点菜单点击事件
+			$('.chose4').on('click','a',function(){
+				$('.chose4 a').each(function(index,item){
+					$(this).removeClass();
+				});
+				$(this).addClass('active3');
+				
+				var id = [];
+				$('td a[class="active3"]').each(function(index,item){
+					id.push(item.id);
+				});
+
+				$.getJSON('exam/manager/getDepartmentSubject',{
+					id: id 
+				},handler);
+			});
+
+			data.forEach(function(item,index){
+				var newA = $('<a href="#" id="['+item.id+']">'+item.title+'</a>');
+				$('.chose4').append(newA);
+			});
+		});
+
+		// 审核事件
+		$('body').on('click','.pass',function(){
+			var id = +this.id;
+			var key = "通过";
+			$.ajax('exam/manager/checkSubject',{
+				'data': {
+					id: id,
+					key: key
+				},
+				'method':'POST',
+        'content-Type':'application/json',
+				success:function(data){
+					alert("审核已通过");
+					$('.pass[id="'+id+'"],.notpass[id="'+id+'"],.deleteSub[id="'+id+'"]').remove();
+					var newA =$('<ahref="javascript:void(0);" id='+this.id+' class="joinPaper">加入试卷</a>');
+					$('.Catalogcontentdown[id="'+id+'"]').append(newA);
+				}
+			});
+		});
+
+		$('body').on('click','.notpass',function(){
+			var id = +this.id;
+			var key = "未通过";
+			$.ajax('exam/manager/checkSubject',{
+				'data': {
+					id: id,
+					key: key
+				},
+				'method':'POST',
+        'content-Type':'application/json',
+				success:function(data){
+					alert("审核未通过");
+				}
+			});
+		});
+		//删除事件
+		$('body').on('click','.deleteSub',function(){
+			var id = +this.id;
+			$.ajax('exam/manager/delSubject',{
+				'data': { id: id },
+				'method':'POST',
+        'content-Type':'application/json',
+				success:function(data){
+					alert("题目已删除");
+				}
+			});
+		});
+		//显示答案
+		$('body').on('click','.Catalogcontentup',function(){
+			var id = +this.id;
+			$.getJSON('exam/manager/showAnswer',{ id: id },function(data){
+				if (data[0].answer) {
+					var newSpan=$('<span>'+data[0].answer+'</span>');
+					// $('.answer div:eq('+ divE +')').empty();
+					$('.answer div[id="'+id+'"]').empty();
+					$('.answer div[id="'+id+'"]').append(newSpan);
+				}else{
+					$.getJSON('exam/manager/showRadioAnswer',{ id: id },function(data){
+						var code = 65;
+						$('.answer div[id="'+id+'"]').empty();
+						data.forEach(function(item,index){
+							if (data) {
+								var newSpan=$('<span id='+item.id+' correct='+item.correct.data[0]+'>'+String.fromCharCode(code++)+'.'+item.content+'</span><br>');
+								$('.answer div[id="'+id+'"]').append(newSpan);
+							}else{
+								var newSpan = $('<span>上传用户比较懒,没有上传答案!</span>');
+								$('.answer div[id="'+id+'"]').append(newSpan);
+							};	
+						});
+					});
+				};
+			});
+		});
+
+	});
+</script>
