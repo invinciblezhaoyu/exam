@@ -1,0 +1,201 @@
+<div class="editingarea">
+    <div class="c_flex"><span class="c_flexible"></span></div>
+    <div class="Topictitle">添加题目</div>
+    <div class="c_editview">
+        <div class="Attributetit">题目属性</div>
+            <div>
+                <span>题型</span>
+                <select name="subjectType" id=""></select>
+                <span>难度</span>
+                <select name="subjectLevel" id=""></select>
+                <span>方向</span>
+                <select name="department" id=""></select>
+                <span>知识点</span>
+                <select name="topic" id=""></select>
+            </div>
+        <div class="Problem">
+            <div class="Attributetit">题目题干</div>
+                <div class="Problemcontent">
+                    <textarea name="" id="" cols="155" rows="5"></textarea>               
+                </div>
+        </div>
+        <div class="Answeroptions">
+            <div class="Attributetit">
+                答案选项<em>(通过勾选每个选项下面的框难吃时间点咳嗽打开)</em>
+            </div>
+            <div class="c_condition">
+                <span class="icon_add icon_add0">
+                    <em class="icon_r" style="float: left">添加选项</em></span>
+                <span class="icon_add icon_clear">
+                    <em class="icon_r" style="float: left">清除选项</em></span>
+            </div>
+            <div class="Answercontent">
+                
+            </div>
+        </div>
+        <div class="Answeroptions2">
+            <div class="Problem">
+                <div class="Attributetit">答案描述</div>
+                <div class="Problemcontent">
+                    <textarea name="" id="" cols="155" rows="5"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="AnalysisAndSolution">
+            <div class="Problem">
+                <div class="Attributetit">答案解析</div>
+                <div class="Problemcontent">
+                    <textarea name="" id="" cols="155" rows="5"></textarea>
+                </div>
+            </div>
+        </div>
+        </div>
+        <div class="btn_left">
+            <span class="btnL"><em class="btnR">保存并继续</em></span>
+            <span class="btnL"><em class="btnR">保存并关闭</em></span>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function(){
+        
+        $.getJSON('exam/manager/getAllSubjectType',function(data){
+
+            data.forEach(function(item){
+                var newOption = $('<option id="'
+                    +item.id+'" value="'+item.id+'">'
+                    +item.realName+'</option>');
+                $('select[name="subjectType"]').append(newOption);
+            });
+            //答案框默认隐藏
+            $('.Answeroptions2').css('display','none');
+            //单选题
+            $('select[name="subjectType"] option[id="1"]').on('click',function(){
+                code = 65;
+                num = 1;
+                $('.Answerpart').remove();
+                $('.AProblem').remove();
+                $('.Answeroptions').css('display','block');
+                $('.Answeroptions2').css('display','none');
+
+            });
+            
+            //多选题
+            $('select[name="subjectType"] option[id="2"]').on('click',function(){
+                code = 65;
+                num = 1;
+                $('.Answerpart').remove();
+                $('.AProblem').remove();
+                $('.Answeroptions').css('display','block');
+                $('.Answeroptions2').css('display','none');
+            });
+            
+            //简答题
+            $('select[name="subjectType"] option[id="3"]').on('click',function(){
+                $('.Answeroptions').css('display','none');
+                $('.Answeroptions2').css('display','block');
+            });
+            //清除选项
+            $('.icon_clear').on('click',function(){
+                $('.Answerpart').remove();
+                $('.AProblem').remove();
+                code = 65;
+                num = 1;
+            });
+        });
+        $.getJSON('exam/manager/getAllSubjectLevel',function(data){
+            data.forEach(function(item){
+                var newOption = $('<option id="'
+                    +item.id+'" value="'+item.id+'">'
+                    +item.realName+'</option>');
+                $('select[name="subjectLevel"]').append(newOption);
+            });
+        });
+        $.getJSON('exam/manager/getAllDepartmentes',function(data){
+            data.forEach(function(item){
+                var newOption = $('<option id="'
+                    +item.id+'" value="'+item.id+'">'
+                    +item.name+'</option>');
+                $('select[name="department"]').append(newOption);
+            });
+        });
+        $.getJSON('exam/manager/getAllTopics',function(data){
+            data.forEach(function(item){
+                var newOption = $('<option id="'
+                    +item.id+'" value="'+item.id+'">'
+                    +item.title+'</option>');
+                $('select[name="topic"]').append(newOption);
+            });
+        });  
+        //增加选项
+        var code = 65;
+        var num = 1
+        function addChoose(checkbox){
+            var newChose = $('<div class="Answerpart">'
+                +'<div class="Answerpart_left">'
+                    +'<p>'+String.fromCharCode(code++)+'</p><span><input type="'+checkbox+'" name="choose"/></span>'
+                +'</div>'
+                +'<div class="Answerpart_right">'
+                    +'<textarea name="" id="" cols="60" rows="5"></textarea>'
+                +'</div>'
+                +'<div class="clear"></div>'
+            +'</div>');
+            var newSolution = $('<div class="Problem AProblem">'
+                +'<div class="fistproblm">'
+                    +'<span>'+ num++ +'.</span><a href="#"></a>'
+                +'</div>'
+                +'<div class="Problemcontent">'
+                    +'<textarea name="" id="" cols="155" rows="5"></textarea>'
+                +'</div>'
+            +'</div>');
+            $('.Answercontent').append(newChose);
+            $('.AnalysisAndSolution').append(newSolution);
+        }   
+        //添加单选题目
+        $('.icon_add0').on('click',function(){
+            if ($('select[name="subjectType"]').val() == 1) {
+                addChoose('radio');
+            }else if($('select[name="subjectType"]').val() == 2){
+                addChoose('checkbox');
+            }
+        });
+
+        $('.btnL:eq(0)').click('click',function(){
+            var subjectType_id = $('select[name="subjectType"]').val();
+            var getAllSubjectLevel_id = $('select[name="getAllSubjectLevel"]').val();
+            var getAllDepartmentes_id = $('select[name="getAllDepartmentes"]').val();
+            var getAllTopics_id = $('select[name="getAllTopics"]').val();
+            var uploadTime = new Date();
+            var stem = $('.Problemcontent:eq(0) textarea').val();
+            var analysis = $('.Problemcontent:eq(1) textarea').val();
+            var answer = $('.Problemcontent:eq(2) textarea').val();
+            var checkState = '未审核';
+            var user_id = 'null';
+            $.ajax('exam/manager/checkSubject',{
+                'data': {
+                    subjectType_id:subjectType_id,
+                    getAllSubjectLevel_id:getAllSubjectLevel_id,
+                    getAllDepartmentes_id:getAllDepartmentes_id,
+                    getAllTopics_id:getAllTopics_id,
+                    uploadTime:uploadTime,
+                    stem:stem,
+                    analysis:analysis,
+                    answer:answer,
+                    checkState:checkState,
+                    user_id:user_id
+                },
+                'method':'POST',
+                'content-Type':'application/json',
+                success:function(data){
+                    if (data) {
+                        alert("保存成功");
+                    }
+                }
+            });
+        });
+
+        
+    });
+
+</script>

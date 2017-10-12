@@ -19,11 +19,6 @@
       <span class="icon_lead-in"><em class="icon_r">批量导入题目</em></span>
       <span class="icon_add"><em class="icon_r">单个添加题目</em></span>
     </div>
-    
-		
-
-
-
     <div class="divtable">
     	<table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablea">
         <tbody>
@@ -110,7 +105,7 @@
 			});	
 			return subjectNum;
 		};
-		$('.search span:eq(2)').tri
+		// $('.search span:eq(2)').tri
 		//题干关键字查找
 		$('.search span:eq(2)').on('click',function(){
 			// var subjectNum;
@@ -221,7 +216,7 @@
 					key: key
 				},
 				'method':'POST',
-        'content-Type':'application/json',
+        		'content-Type':'application/json',
 				success:function(data){
 					alert("审核已通过");
 					$('.pass[id="'+id+'"],.notpass[id="'+id+'"],.deleteSub[id="'+id+'"]').remove();
@@ -240,7 +235,7 @@
 					key: key
 				},
 				'method':'POST',
-        'content-Type':'application/json',
+        		'content-Type':'application/json',
 				success:function(data){
 					alert("审核未通过");
 				}
@@ -283,6 +278,11 @@
 					});
 				};
 			});
+		});
+
+		//单个添加题目
+		$('.icon_add').on('click',function(){
+			$('.right').load('theme/1/pages/addSubject.html');
 		});
 
 	});

@@ -61,6 +61,11 @@ module.exports = {
 	delSubject(id){
 		var sql = "delete from tbl_exam_subject where id = "+id;
 		return pool.execute(sql);
+	},
+	//添加题目
+	delSubject(id){
+		var sql = "insert into tbl_exam_subject values(null,)";
+		return pool.execute(sql);
 	}
 
 };
