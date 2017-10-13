@@ -63,9 +63,25 @@ module.exports = {
 		return pool.execute(sql);
 	},
 	//添加题目
-	delSubject(id){
-		var sql = "insert into tbl_exam_subject values(null,)";
+	saveSubject(subject){
+		var sql = "insert into tbl_exam_subject values("
+		+null+",'"+subject.analysis+"','"+subject.answer+"','"
+		+subject.checkState+"','"+subject.stem+"','"
+		+subject.uploadTime+"','"+subject.department_id+"','"
+		+subject.subjectLevel_id+"','"+subject.subjectType_id+"','"
+		+subject.topic_id+"',"+null+")";
 		return pool.execute(sql);
+	},
+	saveSubjectChoose(choose){
+		console.log(JSON.parse(choose.content).length);
+		console.log(JSON.parse(choose.content));
+		for (var i = 0; i < JSON.parse(choose.content).length; i++) {
+			console.log(i);
+			var sql = "insert into tbl_exam_choice values("
+			+null+",'"+JSON.parse(choose.content)[i]+"',"+JSON.parse(choose.correct)[i]+","+choose.subject_id+")";
+			console.log(sql);
+			pool.execute(sql);
+		}
 	}
 
 };

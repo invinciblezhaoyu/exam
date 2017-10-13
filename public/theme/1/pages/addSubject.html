@@ -1,6 +1,7 @@
 <div class="editingarea">
     <div class="c_flex"><span class="c_flexible"></span></div>
     <div class="Topictitle">添加题目</div>
+    <div class=" "></div>
     <div class="c_editview">
         <div class="Attributetit">题目属性</div>
             <div>
@@ -16,7 +17,7 @@
         <div class="Problem">
             <div class="Attributetit">题目题干</div>
                 <div class="Problemcontent">
-                    <textarea name="" id="" cols="155" rows="5"></textarea>               
+                    <textarea name="subjectContent" id="" cols="155" rows="5"></textarea>               
                 </div>
         </div>
         <div class="Answeroptions">
@@ -37,15 +38,15 @@
             <div class="Problem">
                 <div class="Attributetit">答案描述</div>
                 <div class="Problemcontent">
-                    <textarea name="" id="" cols="155" rows="5"></textarea>
+                    <textarea name="answerDescribe" id="" cols="155" rows="5"></textarea>
                 </div>
             </div>
         </div>
         <div class="AnalysisAndSolution">
             <div class="Problem">
                 <div class="Attributetit">答案解析</div>
-                <div class="Problemcontent">
-                    <textarea name="" id="" cols="155" rows="5"></textarea>
+                <div class="Problemcontent answ">
+                    <textarea name="answerUndo" id="" cols="155" rows="5"></textarea>
                 </div>
             </div>
         </div>
@@ -93,6 +94,8 @@
             
             //简答题
             $('select[name="subjectType"] option[id="3"]').on('click',function(){
+                $('.Answerpart').remove();
+                $('.AProblem').remove();
                 $('.Answeroptions').css('display','none');
                 $('.Answeroptions2').css('display','block');
             });
@@ -134,10 +137,11 @@
         function addChoose(checkbox){
             var newChose = $('<div class="Answerpart">'
                 +'<div class="Answerpart_left">'
-                    +'<p>'+String.fromCharCode(code++)+'</p><span><input type="'+checkbox+'" name="choose"/></span>'
+                    +'<p>'+String.fromCharCode(code++)+'</p>'
+                    +'<span><input type="'+checkbox+'" name="choose"/></span>'
                 +'</div>'
                 +'<div class="Answerpart_right">'
-                    +'<textarea name="" id="" cols="60" rows="5"></textarea>'
+                    +'<textarea name="choose" id="" cols="60" rows="5"></textarea>'
                 +'</div>'
                 +'<div class="clear"></div>'
             +'</div>');
@@ -161,40 +165,53 @@
             }
         });
 
-        $('.btnL:eq(0)').click('click',function(){
-            var subjectType_id = $('select[name="subjectType"]').val();
-            var getAllSubjectLevel_id = $('select[name="getAllSubjectLevel"]').val();
-            var getAllDepartmentes_id = $('select[name="getAllDepartmentes"]').val();
-            var getAllTopics_id = $('select[name="getAllTopics"]').val();
-            var uploadTime = new Date();
-            var stem = $('.Problemcontent:eq(0) textarea').val();
-            var analysis = $('.Problemcontent:eq(1) textarea').val();
-            var answer = $('.Problemcontent:eq(2) textarea').val();
-            var checkState = '未审核';
-            var user_id = 'null';
-            $.ajax('exam/manager/checkSubject',{
-                'data': {
-                    subjectType_id:subjectType_id,
-                    getAllSubjectLevel_id:getAllSubjectLevel_id,
-                    getAllDepartmentes_id:getAllDepartmentes_id,
-                    getAllTopics_id:getAllTopics_id,
-                    uploadTime:uploadTime,
-                    stem:stem,
-                    analysis:analysis,
-                    answer:answer,
-                    checkState:checkState,
-                    user_id:user_id
-                },
+        function addSubject(){
+            var content = [];
+            var correct = [];
+            $('input[name="choose"]').each(function(index,item){
+
+                correct.push(+item.checked);
+            });
+            $('textarea[name="choose"]').each(function(index,item){
+                content.push(item.value);
+            });
+
+            var subject = {};
+            subject.id = 'null';
+            subject.subjectType_id = $('select[name="subjectType"]').val();
+            subject.subjectLevel_id = $('select[name="subjectLevel"]').val();
+            subject.department_id = $('select[name="department"]').val();
+            subject.topic_id = $('select[name="topic"]').val();
+            var localTime = new Date();
+            subject.uploadTime = localTime.toJSON().slice(0,10).concat(' '+localTime.toJSON().slice(11,19));
+            subject.stem = $('.Problemcontent:eq(0) textarea').val();
+            subject.answer = $('textarea[name="answerDescribe"]').val();
+            subject.analysis = $('textarea[name="answerUndo"]').val();
+            subject.checkState = '未审核';
+            subject.user_id = 'null';
+            subject.content = JSON.stringify(content);
+            subject.correct = JSON.stringify(correct);
+            $.ajax('exam/manager/saveSubject',{
+                'data': subject,
                 'method':'POST',
                 'content-Type':'application/json',
                 success:function(data){
-                    if (data) {
-                        alert("保存成功");
-                    }
+                    alert('添加成功');
+                    $('textarea[name="subjectContent"]').empty();
+                    $('textarea[name="answerDescribe"]').empty();
+                    $('textarea[name="answerUndo"]').empty();
+                    $('select[name="subjectType"] option[id="'+$('select[name="subjectType"]').val()+'"]').trigger('click');
                 }
             });
-        });
+        }
 
+        $('.btnL:eq(0)').click('click',function(){
+            addSubject();
+        });
+        $('.btnL:eq(1)').click('click',function(){
+            addSubject();
+            $('.right').load('theme/1/pages/subjectType.html');
+        });
         
     });
 

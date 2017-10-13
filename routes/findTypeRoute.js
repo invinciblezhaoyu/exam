@@ -1,7 +1,10 @@
 require('babel-polyfill');
+
 let express = require('express');
 let findType = require('../db/findType');
 let findSubject = require('../db/findSubject');
+let Subject = require('../module/module');
+let Choose = require('../module/module');
 
 let router = express.Router();
 
@@ -113,6 +116,24 @@ router.get ('/showRadioAnswer',function(req,resp){
 	var id = req.query.id;
 	findSubject.showRadioAnswer(id).then(function(data){
 		resp.send(data);
+	}).catch(function(err){
+		resp.send(err);
+	});
+});
+
+//添加题目
+router.post('/saveSubject',function(req,resp){
+	var subject = new Subject();
+	Object.assign(subject,req.body);
+	findSubject.saveSubject(subject).then(function(data){
+		var choose = new Subject();
+		choose.subject_id = data.insertId;
+		Object.assign(choose,req.body);
+		findSubject.saveSubjectChoose(choose).then(function(data1){
+			
+		}).catch(function(err1){
+			resp.send(err1);
+		});
 	}).catch(function(err){
 		resp.send(err);
 	});
